@@ -7,7 +7,7 @@ terraform/.terraform.tfstate.lock.info
 
 # ── Sensitive variable files ──────────────────────────────────────────
 terraform/terraform.tfvars
-scripts/setup-env.local.sh         # Contains your API token
+scripts/setup-env.local.sh
 
 # ── Generated cluster credentials ─────────────────────────────────────
 output/kubeconfig

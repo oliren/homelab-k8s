@@ -13,7 +13,7 @@ resource "local_file" "talosconfig" {
 
 # Write kubeconfig to disk (used by kubectl, helm, flux, etc.)
 resource "local_file" "kubeconfig" {
-  content         = data.talos_cluster_kubeconfig.this.kubeconfig_raw
+  content         = talos_cluster_kubeconfig.this.kubeconfig_raw
   filename        = "${path.module}/../output/kubeconfig"
   file_permission = "0600"  # Private — grants cluster-admin access
 }
@@ -28,7 +28,7 @@ output "talosconfig" {
 
 output "kubeconfig" {
   description = "Kubernetes client configuration (kubeconfig). Also written to output/kubeconfig."
-  value       = data.talos_cluster_kubeconfig.this.kubeconfig_raw
+  value       = talos_cluster_kubeconfig.this.kubeconfig_raw
   sensitive   = true
 }
 

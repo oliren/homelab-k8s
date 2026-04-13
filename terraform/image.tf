@@ -33,7 +33,7 @@ locals {
 
 # ── Download to pve1 ──────────────────────────────────────────────────
 # pve1 hosts: talos-cp-1, talos-cp-2, talos-cp-3, talos-worker-1
-resource "proxmox_virtual_environment_download_file" "talos_image_pve1" {
+resource "proxmox_download_file" "talos_image_pve1" {
   provider = proxmox.pve1
 
   node_name               = "pve1"
@@ -48,7 +48,7 @@ resource "proxmox_virtual_environment_download_file" "talos_image_pve1" {
 # ── Download to pve2 ──────────────────────────────────────────────────
 # pve2 hosts: talos-worker-2
 # ⚠️  This host also runs OPNsense — the image download is a one-time operation
-resource "proxmox_virtual_environment_download_file" "talos_image_pve2" {
+resource "proxmox_download_file" "talos_image_pve2" {
   provider = proxmox.pve2
 
   node_name               = "pve2"
@@ -64,7 +64,7 @@ resource "proxmox_virtual_environment_download_file" "talos_image_pve2" {
 # Used in vms.tf to select the correct image per host
 locals {
   image_file_ids = {
-    pve1 = proxmox_virtual_environment_download_file.talos_image_pve1.id
-    pve2 = proxmox_virtual_environment_download_file.talos_image_pve2.id
+    pve1 = proxmox_download_file.talos_image_pve1.id
+    pve2 = proxmox_download_file.talos_image_pve2.id
   }
 }

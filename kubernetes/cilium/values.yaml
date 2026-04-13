@@ -13,7 +13,7 @@
 # See: https://www.talos.dev/latest/kubernetes-guides/network/deploying-cilium/
 
 # Tell Cilium where the kube-apiserver is (use VIP!)
-k8sServiceHost: 192.168.1.100   # ← CHANGE THIS to match cluster_vip
+k8sServiceHost: 192.168.0.20   # ← CHANGE THIS to match cluster_vip
 k8sServicePort: 6443
 
 # Replace kube-proxy entirely with Cilium's eBPF implementation
@@ -47,7 +47,7 @@ securityContext:
 
 # ── Cluster ──────────────────────────────────────────────────────────
 cluster:
-  name: homelab
+  name: amalthea
 
 # ── L2 Announcements (replaces MetalLB) ──────────────────────────────
 # Cilium will respond to ARP requests for LoadBalancer service IPs.
@@ -102,6 +102,3 @@ rollOutCiliumPods: true
 k8sClientRateLimit:
   qps: 20
   burst: 100
-
-# ── Enable endpoint slices ───────────────────────────────────────────
-enableCiliumEndpointSlice: true

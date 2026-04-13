@@ -10,6 +10,20 @@ variable "pve2_endpoint" {
   type        = string
 }
 
+variable "pve1_api_token" {
+  description = "API Token for PVE1"
+  type = string
+  sensitive = true
+  
+}
+
+variable "pve2_api_token" {
+  description = "API Token for PVE2"
+  type = string
+  sensitive = true
+  
+}
+
 # ── Network ───────────────────────────────────────────────────────────
 
 variable "cluster_vip" {

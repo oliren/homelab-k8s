@@ -17,8 +17,8 @@ metadata:
 spec:
   blocks:
     # ← CHANGE THIS to a free range on your LAN outside DHCP scope
-    - start: "192.168.1.200"
-      stop:  "192.168.1.220"
+    - start: "192.168.0.211"
+      stop:  "192.168.0.240"
 
 ---
 apiVersion: cilium.io/v2alpha1

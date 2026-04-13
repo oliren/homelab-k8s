@@ -11,6 +11,9 @@ pve2_endpoint = "https://192.168.1.11:8006"   # Intel N100 / 16 GB (OPNsense hos
 # export PROXMOX_VE_API_TOKEN="root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 # If pve1 and pve2 need separate tokens, see providers.tf for how to extend this.
 
+pve1_api_token = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+pve2_api_token = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
 # ── Network ───────────────────────────────────────────────────────────
 cluster_vip     = "192.168.1.100"   # Unused IP — Talos built-in VIP for kube-apiserver
 cluster_gateway = "192.168.1.1"     # OPNsense LAN IP on pve2

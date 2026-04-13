@@ -7,9 +7,9 @@
 
 machine:
   kubelet:
-    extraArgs:
+    # extraArgs:
       # Enable TLS cert rotation for kubelet serving certificates
-      rotate-server-certificates: "true"
+      # rotate-server-certificates: "true"
 
     # Extra mounts needed by Longhorn for iSCSI
     extraMounts:
