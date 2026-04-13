@@ -37,10 +37,82 @@ Fully automated Kubernetes cluster using **Talos Linux** on two non-clustered **
 
 ### Prerequisites
 
+Install the following tools on your **Ubuntu Linux** workstation:
+
+#### 1. Terraform
 ```bash
-# Install required tools
-brew install terraform talosctl kubectl helm cilium-cli
-# or on Linux — see each tool's install docs
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+
+curl -fsSL https://apt.releases.hashicorp.com/gpg | \
+  sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+  https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+  sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt-get update && sudo apt-get install -y terraform
+terraform -version
+```
+
+#### 2. talosctl
+```bash
+curl -sL https://talos.dev/install | sh
+# Binary is installed to /usr/local/bin/talosctl
+talosctl version --client
+```
+
+#### 3. kubectl
+```bash
+curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl kubectl.sha256
+kubectl version --client
+```
+
+#### 4. Helm
+```bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+helm version
+```
+
+#### 5. Cilium CLI
+```bash
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+curl -L --remote-name-all \
+  "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-amd64.tar.gz" \
+  "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-amd64.tar.gz.sha256sum"
+sha256sum --check cilium-linux-amd64.tar.gz.sha256sum
+sudo tar -C /usr/local/bin -xzf cilium-linux-amd64.tar.gz
+rm cilium-linux-amd64.tar.gz cilium-linux-amd64.tar.gz.sha256sum
+cilium version --client
+```
+
+#### 6. SSH Agent (required by Terraform bpg/proxmox provider)
+```bash
+# Generate an SSH key if you don't have one
+ssh-keygen -t ed25519 -C "homelab-terraform"
+
+# Copy your public key to both Proxmox hosts
+ssh-copy-id root@192.168.1.10   # pve1
+ssh-copy-id root@192.168.1.11   # pve2
+
+# Start the SSH agent and add your key
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# Optional: add to ~/.bashrc so it persists across sessions
+echo 'eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519 2>/dev/null' >> ~/.bashrc
+```
+
+#### Verify all tools are installed
+```bash
+terraform -version
+talosctl version --client
+kubectl version --client
+helm version
+cilium version --client
 ```
 
 ### 1. Create Proxmox API Token
