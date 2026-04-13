@@ -1,0 +1,39 @@
+# ══════════════════════════════════════════════════════════════════════
+# Cilium LoadBalancer IP Pool + L2 Announcement Policy
+#
+# Apply after Cilium is installed:
+#   kubectl apply -f kubernetes/cilium/ip-pool.yaml
+#
+# This gives Kubernetes services of type LoadBalancer real LAN IPs,
+# announced via ARP — so any device on your network can reach them.
+# Pick a range outside your DHCP scope!
+# ══════════════════════════════════════════════════════════════════════
+
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: homelab-pool
+spec:
+  blocks:
+    # ← CHANGE THIS to a free range on your LAN outside DHCP scope
+    - start: "192.168.1.200"
+      stop:  "192.168.1.220"
+
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: default-l2-policy
+spec:
+  # Announce for all services
+  serviceSelector: {}
+  nodeSelector: {}
+  externalIPs: true
+  loadBalancerIPs: true
+  # Match common network interface naming conventions
+  interfaces:
+    - ^eth+
+    - ^enp+
+    - ^ens+
+    - ^vmbr+

@@ -1,0 +1,31 @@
+# ══════════════════════════════════════════════════════════════════════
+# Talos Worker Machine Config Patch
+#
+# Applied to talos-worker-1 (pve1) and talos-worker-2 (pve2).
+# Workers don't need VIP or cluster-level config — just OS tuning.
+# ══════════════════════════════════════════════════════════════════════
+
+machine:
+  kubelet:
+    extraArgs:
+      # Enable TLS cert rotation for kubelet serving certificates
+      rotate-server-certificates: "true"
+
+    # Extra mounts needed by Longhorn for iSCSI
+    extraMounts:
+      - destination: /var/lib/longhorn
+        type: bind
+        source: /var/lib/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
+
+  install:
+    disk: /dev/sda
+    wipe: false
+
+  # Sysctls recommended for Longhorn and general K8s workloads
+  sysctls:
+    vm.nr_hugepages: "1024"
+    net.core.rmem_max: "2500000"

@@ -1,0 +1,24 @@
+# ══════════════════════════════════════════════════════════════════════
+# Talos Image Factory Schematic
+#
+# This file is POSTed to https://factory.talos.dev/schematics to get a
+# unique schematic ID. Terraform does this automatically in image.tf.
+#
+# Extensions included:
+#   qemu-guest-agent  — lets Proxmox report VM IP, hostname, status
+#   iscsi-tools       — REQUIRED for Longhorn persistent storage
+#   util-linux-tools  — useful system utilities inside Talos
+#
+# To manually get your schematic ID:
+#   curl -X POST --data-binary @schematic.yaml https://factory.talos.dev/schematics
+#
+# To browse available extensions:
+#   https://factory.talos.dev
+# ══════════════════════════════════════════════════════════════════════
+
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/iscsi-tools
+      - siderolabs/util-linux-tools

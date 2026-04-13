@@ -1,0 +1,25 @@
+# ── Terraform state (contains secrets!) ──────────────────────────────
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.tfstate.lock.info
+
+# ── Sensitive variable files ──────────────────────────────────────────
+terraform/terraform.tfvars
+scripts/setup-env.sh         # Contains your API token
+
+# ── Generated cluster credentials ─────────────────────────────────────
+output/kubeconfig
+output/talosconfig
+output/*.yaml
+output/*.json
+
+# ── OS / Editor ──────────────────────────────────────────────────────
+.DS_Store
+.direnv
+.envrc
+*.swp
+*.swo
+.vscode/
+.idea/

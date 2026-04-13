@@ -1,0 +1,30 @@
+# ══════════════════════════════════════════════════════════════════════
+# Copy this file to terraform.tfvars and fill in your actual values.
+# terraform.tfvars is in .gitignore — never commit it!
+# ══════════════════════════════════════════════════════════════════════
+
+# ── Proxmox API endpoints ─────────────────────────────────────────────
+pve1_endpoint = "https://192.168.1.10:8006"   # Intel NUC i3 / 64 GB
+pve2_endpoint = "https://192.168.1.11:8006"   # Intel N100 / 16 GB (OPNsense host)
+
+# API tokens are passed via environment variables — see scripts/setup-env.sh
+# export PROXMOX_VE_API_TOKEN="root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+# If pve1 and pve2 need separate tokens, see providers.tf for how to extend this.
+
+# ── Network ───────────────────────────────────────────────────────────
+cluster_vip     = "192.168.1.100"   # Unused IP — Talos built-in VIP for kube-apiserver
+cluster_gateway = "192.168.1.1"     # OPNsense LAN IP on pve2
+cluster_dns     = "192.168.1.53"    # Pi-hole IP on rpi1
+
+# ── Cluster ───────────────────────────────────────────────────────────
+cluster_name  = "homelab"
+talos_version = "v1.9.5"           # Check for latest: https://github.com/siderolabs/talos/releases
+
+# ── Storage (adjust to match your Proxmox storage pool names) ─────────
+pve1_datastore = "local-lvm"
+pve2_datastore = "local-lvm"
+
+# ── Node static IPs (must be outside your DHCP range!) ───────────────
+cp_ips         = ["192.168.1.101", "192.168.1.102", "192.168.1.103"]
+worker_pve1_ip = "192.168.1.111"
+worker_pve2_ip = "192.168.1.112"

@@ -1,0 +1,107 @@
+# ══════════════════════════════════════════════════════════════════════
+# Cilium Helm Values
+# Tailored for Talos Linux on Proxmox homelab
+#
+# Install command:
+#   helm install cilium cilium/cilium \
+#     --namespace kube-system \
+#     --values kubernetes/cilium/values.yaml
+# ══════════════════════════════════════════════════════════════════════
+
+# ── Talos-specific required settings ─────────────────────────────────
+# These are mandatory when running Cilium on Talos Linux.
+# See: https://www.talos.dev/latest/kubernetes-guides/network/deploying-cilium/
+
+# Tell Cilium where the kube-apiserver is (use VIP!)
+k8sServiceHost: 192.168.1.100   # ← CHANGE THIS to match cluster_vip
+k8sServicePort: 6443
+
+# Replace kube-proxy entirely with Cilium's eBPF implementation
+kubeProxyReplacement: true
+
+# Talos has a custom cgroup mountpoint
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+
+# Required Cilium agent Linux capabilities on Talos
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+
+# ── Cluster ──────────────────────────────────────────────────────────
+cluster:
+  name: homelab
+
+# ── L2 Announcements (replaces MetalLB) ──────────────────────────────
+# Cilium will respond to ARP requests for LoadBalancer service IPs.
+# IP pool is configured separately via CiliumLoadBalancerIPPool CRD.
+l2announcements:
+  enabled: true
+
+externalIPs:
+  enabled: true
+
+# ── Resource limits (appropriate for homelab CPU) ────────────────────
+# pve1 has i3-1115G4 (2 cores / 4 threads) — don't over-allocate
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# ── Operator ─────────────────────────────────────────────────────────
+operator:
+  replicas: 1  # 1 is fine for homelab (default is 2)
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+# ── Hubble (observability) ────────────────────────────────────────────
+# Provides network flow visibility — very useful for debugging
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+    rollOutPods: true
+  ui:
+    enabled: true
+    rollOutPods: true
+
+# ── Gateway API (modern ingress — replaces Ingress API) ──────────────
+# More powerful than traditional Ingress. Supported by Cilium natively.
+gatewayAPI:
+  enabled: true
+
+# ── Rolling restarts on config changes ───────────────────────────────
+rollOutCiliumPods: true
+
+# ── Rate limiting (needed for L2 announcements) ──────────────────────
+k8sClientRateLimit:
+  qps: 20
+  burst: 100
+
+# ── Enable endpoint slices ───────────────────────────────────────────
+enableCiliumEndpointSlice: true
